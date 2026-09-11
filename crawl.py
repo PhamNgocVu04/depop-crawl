@@ -1,5 +1,7 @@
 import os, imaplib, email, re, requests
 from email.header import decode_header
+from email.utils import parsedate_to_datetime
+from datetime import timezone, timedelta
 
 ICLOUD_USER = os.environ["ICLOUD_USER"]
 ICLOUD_PASS = os.environ["ICLOUD_PASS"]
@@ -70,22 +72,27 @@ for i in reversed(ids):
         cand = m1(r"Buyer\s+\S+\s+([A-Za-z0-9_.\-]{2,40})", text)
         name = "" if cand.lower() in ("profile", "view") else cand
     date = msg.get("Date", "")
+    try:
+        dt = parsedate_to_datetime(date).astimezone(timezone(timedelta(hours=7)))
+        date = f"{dt.day}/{dt.month}"
+    except:
+        pass
     label = m1(r'<a\b[^>]*?href="([^"]+)"[^>]*>(?:(?!</a>|<a\b)[\s\S])*?Download shipping label', html)
     label = resolve_label(label.replace("&amp;", "&"))
     receive = m1(r"What you.ll receive[\s\S]*?\$?([\d,]+\.\d{2})", text)
     oi, si = text.find("Order details"), text.find("Ship to")
     region = text[oi:si] if (oi >= 0 and si > oi) else text
     items = re.findall(r"image\s+[\s\S]+?\s+Size:\s*([A-Za-z0-9]+)\s+\$[\d.,]+", region, re.I)
-    imgs = []
-    for u in re.findall(r"https://media-photos\.depop\.com/[^\s\"'#=]+\.jpg", html, re.I):
-        if u not in imgs: imgs.append(u)
+
     if not items:
         size = m1(r"Size:\s*([A-Za-z0-9]+)", text)
-        rows.append([acc, date, name, size, imgs[0] if imgs else "", label, f"${receive}" if receive else ""])
+        rows.append({"date": date, "acc": acc, "name": name, "size": size,
+                     "label": label, "earning": f"${receive}" if receive else ""})
     else:
         for k, sz in enumerate(items):
-            rows.append([acc, date, name, sz, imgs[k] if k < len(imgs) else "", label,
-                         (f"${receive}" if receive else "") if k == 0 else ""])
+            rows.append({"date": date, "acc": acc, "name": name, "size": sz,
+                         "label": label,
+                         "earning": (f"${receive}" if receive else "") if k == 0 else ""})
     M.store(i, '+FLAGS', '\\Seen')
 
 if rows:
