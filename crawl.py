@@ -91,10 +91,12 @@ for i in reversed(ids):
     if not items:
         size = m1(r"Size:\s*([A-Za-z0-9]+)", text)
         rows.append({"date": date, "acc": acc, "name": name, "size": size,
+                     "img": imgs[0] if imgs else "",
                      "label": label, "earning": f"${receive}" if receive else ""})
     else:
         for k, sz in enumerate(items):
             rows.append({"date": date, "acc": acc, "name": name, "size": sz,
+                         "img": imgs[k] if k < len(imgs) else "",
                          "label": label,
                          "earning": (f"${receive}" if receive else "") if k == 0 else ""})
     M.store(i, '+FLAGS', '\\Seen')
