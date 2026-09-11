@@ -16,5 +16,7 @@ jobs:
         env:
           ICLOUD_USER: ${{ secrets.ICLOUD_USER }}
           ICLOUD_PASS: ${{ secrets.ICLOUD_PASS }}
+          ICLOUD_USER2: ${{ secrets.ICLOUD_USER2 }}
+          ICLOUD_PASS2: ${{ secrets.ICLOUD_PASS2 }}
           WEBAPP_URL: ${{ secrets.WEBAPP_URL }}
           SECRET: ${{ secrets.SECRET }}
