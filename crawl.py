@@ -84,6 +84,10 @@ for i in reversed(ids):
     region = text[oi:si] if (oi >= 0 and si > oi) else text
     items = re.findall(r"image\s+[\s\S]+?\s+Size:\s*([A-Za-z0-9]+)\s+\$[\d.,]+", region, re.I)
 
+    imgs = []
+    for u in re.findall(r"https://media-photos\.depop\.com/[^\s\"'#=]+\.jpg", html, re.I):
+        if u not in imgs: imgs.append(u)
+
     if not items:
         size = m1(r"Size:\s*([A-Za-z0-9]+)", text)
         rows.append({"date": date, "acc": acc, "name": name, "size": size,
