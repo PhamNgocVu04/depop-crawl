@@ -3,7 +3,6 @@ from email.header import decode_header
 from email.utils import parsedate_to_datetime
 from datetime import timezone, timedelta
 
-# Danh sách iCloud (thêm acc mới -> thêm 1 dòng)
 ICLOUDS = [
     {"user": os.environ["ICLOUD_USER"],  "pw": os.environ["ICLOUD_PASS"]},
     {"user": os.environ["ICLOUD_USER2"], "pw": os.environ["ICLOUD_PASS2"]},
@@ -13,7 +12,6 @@ WEBAPP_URL = os.environ["WEBAPP_URL"]
 SECRET     = os.environ["SECRET"]
 LIMIT      = 30
 
-# Thêm shop ID TN2 vào đây sau khi chạy discover3.py, vd: "xxxxxxxxx":"TN2"
 SHOP_ACC = {"488663384":"PTT1","468105245":"DT262","419902926":"DNE123","351098196":"TN11","353275642":"Fdx 40","307831158":"TN2"}
 DEFAULT_ACC = "ICLOUD"
 
@@ -77,9 +75,11 @@ def process_icloud(user, pw):
             cand = m1(r"Buyer\s+\S+\s+([A-Za-z0-9_.\-]{2,40})", text)
             name = "" if cand.lower() in ("profile", "view") else cand
         date = msg.get("Date", "")
+        ts = 0
         try:
             dt = parsedate_to_datetime(date).astimezone(timezone(timedelta(hours=7)))
             date = f"{dt.day}/{dt.month}"
+            ts = dt.timestamp()
         except:
             pass
         label = m1(r'<a\b[^>]*?href="([^"]+)"[^>]*>(?:(?!</a>|<a\b)[\s\S])*?Download shipping label', html)
@@ -93,12 +93,12 @@ def process_icloud(user, pw):
             if u not in imgs: imgs.append(u)
         if not items:
             size = m1(r"Size:\s*([A-Za-z0-9]+)", text)
-            rows.append({"date": date, "acc": acc, "name": name, "size": size,
+            rows.append({"ts": ts, "date": date, "acc": acc, "name": name, "size": size,
                          "img": imgs[0] if imgs else "",
                          "label": label, "earning": f"${receive}" if receive else ""})
         else:
             for k, sz in enumerate(items):
-                rows.append({"date": date, "acc": acc, "name": name, "size": sz,
+                rows.append({"ts": ts, "date": date, "acc": acc, "name": name, "size": sz,
                              "img": imgs[k] if k < len(imgs) else "",
                              "label": label,
                              "earning": (f"${receive}" if receive else "") if k == 0 else ""})
@@ -112,6 +112,11 @@ for a in ICLOUDS:
         all_rows += process_icloud(a["user"], a["pw"])
     except Exception as e:
         print("Loi acc", a["user"], ":", e)
+
+# Sắp xếp cũ -> mới (đơn mới xuống dưới cùng)
+all_rows.sort(key=lambda r: r.get("ts", 0))
+for r in all_rows:
+    r.pop("ts", None)
 
 if all_rows:
     r = requests.post(WEBAPP_URL, json={"secret": SECRET, "rows": all_rows}, timeout=30)
