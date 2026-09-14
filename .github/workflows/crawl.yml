@@ -18,5 +18,7 @@ jobs:
           ICLOUD_PASS: ${{ secrets.ICLOUD_PASS }}
           ICLOUD_USER2: ${{ secrets.ICLOUD_USER2 }}
           ICLOUD_PASS2: ${{ secrets.ICLOUD_PASS2 }}
+          ICLOUD_USER3: ${{ secrets.ICLOUD_USER3 }}
+          ICLOUD_PASS3: ${{ secrets.ICLOUD_PASS3 }}
           WEBAPP_URL: ${{ secrets.WEBAPP_URL }}
           SECRET: ${{ secrets.SECRET }}
