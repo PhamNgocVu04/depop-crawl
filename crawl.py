@@ -13,6 +13,7 @@ WEBAPP_URL = os.environ["WEBAPP_URL"]
 SECRET     = os.environ["SECRET"]
 LIMIT      = 30
 
+# Thêm shop ID TN2 vào đây sau khi chạy discover3.py, vd: "xxxxxxxxx":"TN2"
 SHOP_ACC = {"488663384":"PTT1","468105245":"DT262","419902926":"DNE123","351098196":"TN11","353275642":"Fdx 40"}
 DEFAULT_ACC = "ICLOUD"
 
