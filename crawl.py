@@ -7,6 +7,7 @@ from datetime import timezone, timedelta
 ICLOUDS = [
     {"user": os.environ["ICLOUD_USER"],  "pw": os.environ["ICLOUD_PASS"]},
     {"user": os.environ["ICLOUD_USER2"], "pw": os.environ["ICLOUD_PASS2"]},
+    {"user": os.environ["ICLOUD_USER3"], "pw": os.environ["ICLOUD_PASS3"]},
 ]
 WEBAPP_URL = os.environ["WEBAPP_URL"]
 SECRET     = os.environ["SECRET"]
