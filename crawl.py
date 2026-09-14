@@ -114,7 +114,6 @@ for a in ICLOUDS:
         print("Loi acc", a["user"], ":", e)
 
 # Sắp xếp cũ -> mới (đơn mới xuống dưới cùng)
-# Sắp xếp cũ -> mới (đơn mới xuống dưới cùng)
 all_rows.sort(key=lambda r: r.get("ts", 0))
 
 if all_rows:
