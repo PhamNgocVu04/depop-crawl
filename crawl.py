@@ -114,9 +114,8 @@ for a in ICLOUDS:
         print("Loi acc", a["user"], ":", e)
 
 # Sắp xếp cũ -> mới (đơn mới xuống dưới cùng)
+# Sắp xếp cũ -> mới (đơn mới xuống dưới cùng)
 all_rows.sort(key=lambda r: r.get("ts", 0))
-for r in all_rows:
-    r.pop("ts", None)
 
 if all_rows:
     r = requests.post(WEBAPP_URL, json={"secret": SECRET, "rows": all_rows}, timeout=30)
